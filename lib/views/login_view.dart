@@ -25,6 +25,7 @@ class _LoginViewState extends State<LoginView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(isLogin ? 'Login' : 'Sign Up', style: Theme.of(context).textTheme.headlineMedium),
+              
               TextField(
                 controller: emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
@@ -37,6 +38,15 @@ class _LoginViewState extends State<LoginView> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
+                   final email = emailController.text.trim();
+                   final password = passwordController.text;
+                   final emailRegex = RegExp(r'^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$');
+                    if (!emailRegex.hasMatch(email)) {
+                   ScaffoldMessenger.of(context).showSnackBar(
+                   const SnackBar(content: Text('Please enter a valid email address')),
+                   );
+                    return;
+                     }
                   if (isLogin) {
                     auth.signIn(emailController.text, passwordController.text);
                   } else {
@@ -45,8 +55,13 @@ class _LoginViewState extends State<LoginView> {
                 },
                 child: Text(isLogin ? 'Login' : 'Sign Up'),
               ),
+               if (auth.errorMessage != null)
+               Text(auth.errorMessage!, style: const TextStyle(color: Colors.red)),
+                
               TextButton(
+                
                 onPressed: () => setState(() => isLogin = !isLogin),
+               
                 child: Text(isLogin ? 'Create Account' : 'Already have account?'),
               ),
             ],

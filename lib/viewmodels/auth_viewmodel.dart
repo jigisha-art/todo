@@ -7,6 +7,8 @@ class AuthViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? user;
   bool isLoading = false;
+  String? errorMessage;
+
 
   AuthViewModel() {
     _auth.authStateChanges().listen((u) {
@@ -17,27 +19,19 @@ class AuthViewModel extends ChangeNotifier {
 
   Future<void> signIn(String email, String password) async {
     isLoading = true;
+    errorMessage = null;
+
     notifyListeners();
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
     } catch (e) {
-      // Handle error
+      errorMessage = "Invalid username or password";
+      notifyListeners();
     }
     isLoading = false;
     notifyListeners();
   }
 
-  // Future<void> signUp(String email, String password) async {
-  //   isLoading = true;
-  //   notifyListeners();
-  //   try {
-  //     await _auth.createUserWithEmailAndPassword(email: email, password: password);
-  //   } catch (e) {
-  //     // Handle error
-  //   }
-  //   isLoading = false;
-  //   notifyListeners();
-  // }
   Future<void> signUp(String email, String password) async {
   isLoading = true;
   notifyListeners();
